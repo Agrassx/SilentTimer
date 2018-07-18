@@ -1,6 +1,7 @@
 package ru.agrass.silenttimer.view.timerlist;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,21 +16,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.fabric.sdk.android.Fabric;
 import ru.agrass.silenttimer.R;
+import ru.agrass.silenttimer.SilentTimerApplication;
 import ru.agrass.silenttimer.model.Timer;
 import ru.agrass.silenttimer.model.parsers.TimeParser;
 import ru.agrass.silenttimer.presenter.TimerListPresenter;
+import ru.agrass.silenttimer.receivers.SoundSwitchReceiver;
 import ru.agrass.silenttimer.view.activity.MainActivityView;
 import ru.agrass.silenttimer.view.adapters.TimerRecyclerViewAdapter;
 import ru.agrass.silenttimer.view.base.BaseFragment;
@@ -76,7 +83,7 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
         setRetainInstance(true);
         presenter = new TimerListPresenter(getContext(), this);
         mAdapter = new TimerRecyclerViewAdapter(new ArrayList<>());
-        timePicker = new TimePickerDialogC();
+        timePicker = new TimePickerDialogC(getContext());
     }
 
 
@@ -96,11 +103,20 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
         mAdapter.setDeleteTimerClickListener(this::deleteTimer);
         mAdapter.setChangeTimerListener(this::changeTimer);
         mAdapter.setEditTimeClickListener(this::editTime);
+        mAdapter.setOnChangeSwitchListener(this::onSwitchTimer);
 
         if (savedInstanceState == null) {
             presenter.getTimers();
         }
         return view;
+    }
+
+    private void onSwitchTimer(Timer timer) {
+        if (timer.isEnable()) {
+            presenter.startTimer(timer);
+            return;
+        }
+        presenter.stopTimer(timer);
     }
 
     private void deleteTimer(Timer timer) {
@@ -141,13 +157,13 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
     private void showDialog(int hour, int minute, TimePickerDialogC.OnTimeSelectedListener listener) {
         timePicker.setOnTimeSelectedListener(listener);
         timePicker.setTime(hour, minute);
-        assert getFragmentManager() != null;
-        timePicker.show(getFragmentManager(), TimePickerDialogC.class.getSimpleName());
+        timePicker.show();
     }
 
     private void addTimer(View view) {
         Log.e(TAG, "OnClickListener");
-        presenter.addTimer();
+        presenter.startTimer(mAdapter.getTimer(0));
+//        presenter.addTimer();
     }
 
     @Override

@@ -1,27 +1,26 @@
 package ru.agrass.silenttimer.view.custom.view.dialog;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatDialogFragment;
-import android.app.TimePickerDialog;
+import android.content.Context;
 import android.widget.TimePicker;
 
-public class TimePickerDialogC extends AppCompatDialogFragment implements android.app.TimePickerDialog.OnTimeSetListener {
+
+public class TimePickerDialogC implements android.app.TimePickerDialog.OnTimeSetListener {
 
     private OnTimeSelectedListener onTimeSelected;
+    private android.app.TimePickerDialog instance;
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new android.app.TimePickerDialog(getContext(), this, 0, 0, true);
+    public TimePickerDialogC(Context context) {
+        instance = new android.app.TimePickerDialog(
+                context,
+                this,
+                0,
+                0,
+                true
+        );
     }
 
-    @Override
-    public void show(@NonNull FragmentManager manager, String tag) {
-        super.show(manager, tag);
+    public void show() {
+        instance.show();
     }
 
     public void setOnTimeSelectedListener(OnTimeSelectedListener onTimeSelected) {
@@ -29,7 +28,7 @@ public class TimePickerDialogC extends AppCompatDialogFragment implements androi
     }
 
     public void setTime(int hour, int minute) {
-        ((android.app.TimePickerDialog) getDialog()).updateTime(hour, minute);
+        instance.updateTime(hour, minute);
     }
 
     @Override
@@ -42,10 +41,9 @@ public class TimePickerDialogC extends AppCompatDialogFragment implements androi
         dismiss();
     }
 
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
+    public void dismiss() {
         onTimeSelected = null;
+        instance.dismiss();
     }
 
     public interface OnTimeSelectedListener {

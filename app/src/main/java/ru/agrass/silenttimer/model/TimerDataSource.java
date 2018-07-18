@@ -14,7 +14,7 @@ public interface TimerDataSource {
      *
      * @return the user from the data source.
      */
-    Flowable<Timer> getTimer();
+    Flowable<Timer> getTimer(long uid);
 
     Flowable<List<Timer>> getAllTimers();
 

@@ -25,9 +25,8 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
     public static final int TIME_TO = 0;
     public static final int TIME_FROM = 1;
 
-    private OnEditTimeFromClickListener editTimeFromClickListener;
     private OnDeleteTimerClickListener deleteTimerClickListener;
-    private OnEditTimeToClickListener editTimeToClickListener;
+    private OnChangeSwitchListener onChangeSwitchListener;
     private OnEditTimeClickListener editTimeClickListener;
     private OnChangeTimerListener changeTimerListener;
     private List<Timer> list;
@@ -51,7 +50,7 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
                 list.get(position),
                 changeTimerListener,
                 editTimeClickListener,
-                editTimeToClickListener,
+                onChangeSwitchListener,
                 deleteTimerClickListener
         );
     }
@@ -74,6 +73,10 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         this.list.add(timer);
     }
 
+    public Timer getTimer(int index) {
+        return list.get(index);
+    }
+
     public void notifyTimerChanged(Timer timer) {
         if (changeTimerListener == null) return;
         changeTimerListener.onChange(timer);
@@ -87,12 +90,8 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         this.deleteTimerClickListener = deleteTimerClickListener;
     }
 
-    public void setEditTimeFromClickListener(OnEditTimeFromClickListener editTimeFromClickListener) {
-        this.editTimeFromClickListener = editTimeFromClickListener;
-    }
-
-    public void setEditTimeToClickListener(OnEditTimeToClickListener editTimeToClickListener) {
-        this.editTimeToClickListener = editTimeToClickListener;
+    public void setOnChangeSwitchListener(OnChangeSwitchListener onChangeSwitchListener) {
+        this.onChangeSwitchListener = onChangeSwitchListener;
     }
 
     public void setEditTimeClickListener(OnEditTimeClickListener editTimeClickListener) {
@@ -113,13 +112,13 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         }
 
         void bind(final Timer timer, final OnChangeTimerListener changeTimerListener,
-                  final OnEditTimeClickListener editTimeFromClickListener,
-                  final OnEditTimeToClickListener editTimeToClickListener,
+                  final OnEditTimeClickListener editTimeClickListener,
+                  final OnChangeSwitchListener onSwitchListener,
                   final OnDeleteTimerClickListener deleteTimerClickListener) {
 
             CheckBoxDay[] days = new CheckBoxDay[7];
 
-            bindSwitchTimer(switchItemTimer, timer, changeTimerListener);
+            bindSwitchTimer(switchItemTimer, timer, changeTimerListener, onSwitchListener);
 
             bindCheckBoxDays(timer, days, changeTimerListener);
 
@@ -127,14 +126,14 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
                     timer,
                     textViewTimeFrom,
                     timer.getTimeFrom(),
-                    editTimeFromClickListener
+                    editTimeClickListener
             );
 
             bindTextViewTimeTo(
                     timer,
                     textViewTimeTo,
                     timer.getTimeTo(),
-                    editTimeFromClickListener
+                    editTimeClickListener
             );
 
             bindDeleteButton(imageDeleteTimer, timer, deleteTimerClickListener);
@@ -186,14 +185,18 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         }
 
         private void bindSwitchTimer(Switch switchItemTimer, Timer timer,
-                                     OnChangeTimerListener changeTimerListener) {
+                                     OnChangeTimerListener changeTimerListener,
+                                     OnChangeSwitchListener onSwitchListener) {
             switchItemTimer.setChecked(timer.isEnable());
             switchItemTimer.setOnClickListener(
                     view -> {
+                        timer.setEnable(((Switch) view).isChecked());
                         if (changeTimerListener != null) {
                             changeTimerListener.onChange(timer);
                         }
-                        timer.setEnable(((Switch) view).isChecked());
+                        if (onSwitchListener != null) {
+                            onSwitchListener.onSwitch(timer);
+                        }
                     }
             );
 
@@ -213,12 +216,8 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         void onItemClick(Timer item, View sharedView);
     }
 
-    public interface OnEditTimeFromClickListener {
-        void onEditTimeClick(Timer timer);
-    }
-
-    public interface OnEditTimeToClickListener {
-        void onEditTimeClick(Timer timer);
+    public interface OnChangeSwitchListener {
+        void onSwitch(Timer timer);
     }
 
     public interface OnDeleteTimerClickListener {

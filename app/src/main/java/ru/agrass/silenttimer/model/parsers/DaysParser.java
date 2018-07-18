@@ -12,6 +12,7 @@ public class DaysParser {
     private static final Type type = new TypeToken<Map<String, Boolean>>(){}.getType();
 
     //Rule like in Open Street Map "Mo;Sa;Su"
+    @Deprecated
     public static String[] parseDays(String days) {
         if (days == null) {
             return new String[7];
