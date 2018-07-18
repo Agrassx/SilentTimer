@@ -7,6 +7,8 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.Map;
 
 import ru.agrass.silenttimer.model.parsers.DaysParser;
@@ -71,7 +73,7 @@ public class Timer {
     }
 
     private Map<String, Boolean> initWeek() {
-        daysMap = new ArrayMap<>();
+        daysMap = new ArrayMap<>(7);
         daysMap.put(Week.MONDAY, false);
         daysMap.put(Week.TUESDAY, false);
         daysMap.put(Week.WEDNESDAY, false);
@@ -137,5 +139,10 @@ public class Timer {
         if (getClass() != obj.getClass()) return false;
         Timer other = (Timer) obj;
         return getUid() == other.getUid();
+    }
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
     }
 }

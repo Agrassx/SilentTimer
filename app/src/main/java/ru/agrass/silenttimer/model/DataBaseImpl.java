@@ -44,8 +44,10 @@ public class DataBaseImpl implements TimerDataSource {
     }
 
     @Override
-    public Flowable<Timer> getTimer() {
-        return null;
+    public Flowable<Timer> getTimer(long uid) {
+        return db.timerDao().getTimerByUid(uid)
+                .subscribeOn(schedulerProvider.io())
+                .unsubscribeOn(schedulerProvider.io());
     }
 
     @Override

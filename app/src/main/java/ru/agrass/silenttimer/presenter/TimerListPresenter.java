@@ -7,12 +7,10 @@ import android.util.Log;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableSingleObserver;
 import ru.agrass.silenttimer.model.DataBaseImpl;
 import ru.agrass.silenttimer.model.Timer;
+import ru.agrass.silenttimer.model.TimerScheduler;
 import ru.agrass.silenttimer.presenter.Base.BasePresenter;
 import ru.agrass.silenttimer.view.timerlist.TimerListView;
 
@@ -24,9 +22,13 @@ public class TimerListPresenter extends BasePresenter {
     private final TimerListView view;
     private Disposable addDisposable;
     private TimePickerDialog dialogs;
+    private TimerScheduler timerScheduler;
+    private Context context;
 
     public TimerListPresenter(Context context, TimerListView view) {
         this.dataBase = DataBaseImpl.getInstance(context);
+        this.timerScheduler = new TimerScheduler();
+        this.context = context;
         this.view = view;
     }
 
@@ -108,4 +110,11 @@ public class TimerListPresenter extends BasePresenter {
         compositeDisposable.clear();
     }
 
+    public void startTimer(Timer timer) {
+        timerScheduler.startTimer(timer);
+    }
+
+    public void stopTimer(Timer timer) {
+        timerScheduler.cancelTimer(timer);
+    }
 }

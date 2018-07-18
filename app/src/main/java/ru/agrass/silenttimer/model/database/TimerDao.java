@@ -20,6 +20,9 @@ public interface TimerDao {
     @Query("SELECT * FROM timers")
     Flowable<List<Timer>> getAll();
 
+    @Query("SELECT * FROM timers WHERE uid = :uid")
+    Flowable<Timer> getTimerByUid(long uid);
+
     @Insert
     void insertAll(Timer... timers);
 

@@ -22,7 +22,6 @@ public class TimeParser {
         return intTime;
     }
 
-
     public static int getIntMinuteFromString(String time) {
         return getTime(time, TYPE_MINUTE);
     }
