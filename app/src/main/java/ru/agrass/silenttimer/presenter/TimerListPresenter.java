@@ -44,6 +44,7 @@ public class TimerListPresenter extends BasePresenter {
     }
 
     public void updateTimer(Timer timer) {
+        Log.e(TAG, "Update timer");
         addDisposable = dataBase.insertOrUpdateTimer(timer)
                 .subscribeOn(mSchedulerProvider.io())
                 .doOnSuccess(this::onTimerUpdate)
@@ -51,6 +52,7 @@ public class TimerListPresenter extends BasePresenter {
                 .observeOn(mSchedulerProvider.ui())
                 .subscribe();
         compositeDisposable.add(addDisposable);
+        timerScheduler.updateTimer(timer);
     }
 
     public void addTimer() {

@@ -9,3 +9,6 @@
 /build
 /captures
 .externalNativeBuild
+/gradle.properties
+/.gitignore
+/app/fabric.properties

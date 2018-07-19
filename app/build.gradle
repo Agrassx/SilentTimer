@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 buildscript {
     repositories {
@@ -15,11 +17,30 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+
 
 android {
+
+    def keystorePropertiesFile = rootProject.file("keystore.properties")
+    def apiKeysPropertiesFile = rootProject.file("apikeys.properties")
+
+    def keystoreProperties = new Properties()
+    def apiKeysProperties = new Properties()
+
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    apiKeysProperties.load(new FileInputStream(apiKeysPropertiesFile))
+
     compileSdkVersion 27
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     defaultConfig {
         applicationId "ru.agrass.silenttimer"
         minSdkVersion 21
@@ -27,16 +48,18 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        manifestPlaceholders = [FabricApiKey : apiKeysProperties['FabricApiKey']]
     }
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -79,6 +102,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
-        transitive = true;
+        transitive = true
     }
 }

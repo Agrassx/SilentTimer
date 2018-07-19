@@ -21,13 +21,19 @@ public class AlarmManagerUtil {
                 intent,
                 0
         );
-        SilentTimerApplication
-                .getAlarmManager()
-                .setExact(
-                        AlarmManager.RTC_WAKEUP,
-                        atTime,
-                        alarmIntent
-                );
+        AlarmManager manager = SilentTimerApplication.getAlarmManager();
+//        SilentTimerApplication
+//                .getAlarmManager()
+//                .setExact(
+//                        AlarmManager.RTC_WAKEUP,
+//                        atTime,
+//                        alarmIntent
+//                );
+        manager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                atTime,
+                alarmIntent
+        );
     }
 
     public static void cancelAlarm(Intent intent) {
@@ -35,7 +41,7 @@ public class AlarmManagerUtil {
                 SilentTimerApplication.getInstance(),
                 safeLongToInt(intent.getLongExtra(TAG_UID, 0L)),
                 intent,
-                PendingIntent.FLAG_CANCEL_CURRENT
+                0
         );
         SilentTimerApplication.getAlarmManager().cancel(alarmIntent);
     }
