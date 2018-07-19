@@ -11,3 +11,4 @@
 .externalNativeBuild
 /gradle.properties
 /.gitignore
+/app/fabric.properties
