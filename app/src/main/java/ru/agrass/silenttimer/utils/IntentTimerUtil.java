@@ -22,9 +22,9 @@ public class IntentTimerUtil {
 
         intent.setAction(SoundSwitchReceiver.SWITCH_TIMER);
         intent.putExtra(TAG_UID, timer.getUid());
-        intent.putExtra(TAG_TIME_TO, timer.getTimeTo());
-        intent.putExtra(TAG_TIME_FROM, timer.getTimeFrom());
         intent.putExtra(TAG_SOUND_TURN_OFF, isSoundOff);
+//        intent.putExtra(TAG_TIME_TO, timer.getTimeTo());
+//        intent.putExtra(TAG_TIME_FROM, timer.getTimeFrom());
 
         return intent;
     }

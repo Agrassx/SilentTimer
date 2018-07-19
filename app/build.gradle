@@ -33,6 +33,11 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        each { type ->
+            type.buildConfigField 'String', 'FabricApiKey', FabricApiKey
+        }
+        manifestPlaceholders = [FabricApiKey : FabricApiKey]
     }
     buildTypes {
         release {
@@ -79,6 +84,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
-        transitive = true;
+        transitive = true
     }
 }
