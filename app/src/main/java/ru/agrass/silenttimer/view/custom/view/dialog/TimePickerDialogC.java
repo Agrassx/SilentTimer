@@ -1,15 +1,21 @@
 package ru.agrass.silenttimer.view.custom.view.dialog;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.widget.TimePicker;
 
 
-public class TimePickerDialogC implements android.app.TimePickerDialog.OnTimeSetListener {
+public class TimePickerDialogC implements android.app.TimePickerDialog.OnTimeSetListener,
+        DialogInterface.OnCancelListener {
 
     private OnTimeSelectedListener onTimeSelected;
     private android.app.TimePickerDialog instance;
 
     public TimePickerDialogC(Context context) {
+        createNewTimePickerInstance(context);
+    }
+
+    private void createNewTimePickerInstance(Context context) {
         instance = new android.app.TimePickerDialog(
                 context,
                 this,
@@ -17,6 +23,7 @@ public class TimePickerDialogC implements android.app.TimePickerDialog.OnTimeSet
                 0,
                 true
         );
+        instance.setOnCancelListener(this);
     }
 
     public void show() {
@@ -44,6 +51,12 @@ public class TimePickerDialogC implements android.app.TimePickerDialog.OnTimeSet
     public void dismiss() {
         onTimeSelected = null;
         instance.dismiss();
+        createNewTimePickerInstance(instance.getContext());
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        dismiss();
     }
 
     public interface OnTimeSelectedListener {
