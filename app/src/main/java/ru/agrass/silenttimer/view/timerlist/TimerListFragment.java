@@ -162,8 +162,8 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
 
     private void addTimer(View view) {
         Log.e(TAG, "OnClickListener");
-        presenter.startTimer(mAdapter.getTimer(0));
-//        presenter.addTimer();
+//        presenter.startTimer(mAdapter.getTimer(0));
+        presenter.addTimer();
     }
 
     @Override
@@ -183,9 +183,14 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
 
     @Override
     public void showTimers(List<Timer> list) {
-        Log.e(TAG, new Gson().toJson(list));
-        mAdapter.addAll(list);
-        mAdapter.notifyDataSetChanged();
+        if (list == null || list.size() < 1) {
+            buttonAdd.setVisibility(View.VISIBLE);
+        } else {
+            Log.e(TAG, new Gson().toJson(list));
+            buttonAdd.setVisibility(View.GONE);
+            mAdapter.addAll(list);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
