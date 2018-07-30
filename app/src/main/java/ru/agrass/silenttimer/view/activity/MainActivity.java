@@ -1,51 +1,77 @@
 package ru.agrass.silenttimer.view.activity;
 
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.Intent;
+import android.Manifest;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
 import ru.agrass.silenttimer.R;
-import ru.agrass.silenttimer.receivers.SoundSwitchReceiver;
 import ru.agrass.silenttimer.view.timerlist.TimerListFragment;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityView {
 
-    private static final int REQUEST_ACCESS_NOTIFICATION_POLICY = 213;
     private static final int REQUEST_MODIFY_AUDIO_SETTINGS = 232;
-    private SoundSwitchReceiver receiver = new SoundSwitchReceiver();
+
+    private View mLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
+        mLayout = findViewById(R.id.mainLayout);
         setSupportActionBar(findViewById(R.id.toolbar));
+        checkPermissions();
+    }
 
-        NotificationManager n = (NotificationManager)
-                getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(!n.isNotificationPolicyAccessGranted()) {
-                // Ask the user to grant access
-//                TODO: Add user dialog
-//                TODO: Test on api 21
-                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-                startActivityForResult(intent, REQUEST_ACCESS_NOTIFICATION_POLICY);
-                return;
-            }
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.MODIFY_AUDIO_SETTINGS)
+                != PackageManager.PERMISSION_GRANTED) {
+            askModifyAudioSettings();
+            return;
         }
         startFragment();
+    }
+
+    private void askModifyAudioSettings() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS)) {
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+
+            Snackbar.make(mLayout, "Need audio permission",
+                    Snackbar.LENGTH_INDEFINITE).setAction(R.string.ok, view -> {
+                            // Request the permission
+                            ActivityCompat.requestPermissions(
+                                    MainActivity.this,
+                                    new String[]{Manifest.permission.MODIFY_AUDIO_SETTINGS},
+                                    REQUEST_MODIFY_AUDIO_SETTINGS
+                            );
+                    })
+                    .show();
+
+        } else {
+            // No explanation needed; request the permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{ Manifest.permission.MODIFY_AUDIO_SETTINGS },
+                    REQUEST_MODIFY_AUDIO_SETTINGS);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
     }
 
     private void startFragment()  {
@@ -68,9 +94,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        unregisterReceiver(receiver);
-//        RefWatcher refWatcher = SilentTimerApplication.getRefWatcher(getApplicationContext());
-//        refWatcher.watch(this);
     }
 
     @Override
@@ -78,13 +101,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case REQUEST_ACCESS_NOTIFICATION_POLICY: {
+            case REQUEST_MODIFY_AUDIO_SETTINGS: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startFragment();
+                    checkPermissions();
                 } else {
                     this.onDestroy();
                 }
-                return;
             }
         }
     }
