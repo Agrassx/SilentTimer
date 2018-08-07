@@ -113,7 +113,7 @@ public class TimerListPresenter extends BasePresenter {
     }
 
     public void startTimer(Timer timer) {
-        timerScheduler.startTimer(timer);
+        timerScheduler.setUpTimer(timer);
     }
 
     public void stopTimer(Timer timer) {

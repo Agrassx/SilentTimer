@@ -29,6 +29,18 @@ public class IntentTimerUtil {
         return intent;
     }
 
+    public static Intent getStopIntent(Timer timer) {
+        Intent intent = new Intent(
+                SilentTimerApplication.getInstance(),
+                SoundSwitchReceiver.class
+        );
+
+        intent.setAction(SoundSwitchReceiver.STOP_TIMER);
+        intent.putExtra(TAG_UID, timer.getUid());
+        intent.putExtra(TAG_SOUND_TURN_OFF, true);
+        return intent;
+    }
+
 
 
 }

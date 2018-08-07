@@ -1,6 +1,5 @@
 package ru.agrass.silenttimer.utils;
 
-import android.content.Intent;
 import android.media.AudioManager;
 import android.util.Log;
 
@@ -12,7 +11,7 @@ public class SoundSwitchUtil {
     private static final String TAG = SoundSwitchUtil.class.getSimpleName();
 
     public static void soundTurnOn() {
-        Log.e(TAG, "Sound on");
+        Log.i(TAG, "Sound turn on");
         AudioManager audioManager = (AudioManager) SilentTimerApplication
                 .getInstance().getSystemService(AUDIO_SERVICE);
         assert audioManager != null;
@@ -20,7 +19,7 @@ public class SoundSwitchUtil {
     }
 
     public static void soundTurnOff() {
-        Log.e(TAG, "Sound off");
+        Log.i(TAG, "Sound turn off");
         AudioManager audioManager = (AudioManager) SilentTimerApplication
                 .getInstance().getSystemService(AUDIO_SERVICE);
         assert audioManager != null;

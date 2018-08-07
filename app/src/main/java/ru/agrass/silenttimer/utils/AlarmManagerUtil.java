@@ -15,6 +15,7 @@ public class AlarmManagerUtil {
 
     public static void startAlarm(Intent intent, long atTime) {
         Log.e(TAG, "Start alarm");
+
         PendingIntent alarmIntent = PendingIntent.getBroadcast(
                 SilentTimerApplication.getInstance().getApplicationContext(),
                 safeLongToInt(intent.getLongExtra(TAG_UID, 0L)),
@@ -22,16 +23,26 @@ public class AlarmManagerUtil {
                 0
         );
         AlarmManager manager = SilentTimerApplication.getAlarmManager();
-//        SilentTimerApplication
-//                .getAlarmManager()
-//                .setExact(
-//                        AlarmManager.RTC_WAKEUP,
-//                        atTime,
-//                        alarmIntent
-//                );
+
         manager.setExact(
                 AlarmManager.RTC_WAKEUP,
                 atTime,
+                alarmIntent
+        );
+    }
+
+    public static void stopAlarm(Intent intent) {
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(
+                SilentTimerApplication.getInstance().getApplicationContext(),
+                safeLongToInt(intent.getLongExtra(TAG_UID, 0L)),
+                intent,
+                0
+        );
+        AlarmManager manager = SilentTimerApplication.getAlarmManager();
+
+        manager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                CalendarUtil.getCurrentTimeCalendar().getTimeInMillis() + 3000,
                 alarmIntent
         );
     }

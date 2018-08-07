@@ -72,18 +72,6 @@ public class Timer {
         return daysMap;
     }
 
-    private Map<String, Boolean> initWeek() {
-        daysMap = new ArrayMap<>(7);
-        daysMap.put(Week.MONDAY, false);
-        daysMap.put(Week.TUESDAY, false);
-        daysMap.put(Week.WEDNESDAY, false);
-        daysMap.put(Week.THURSDAY, false);
-        daysMap.put(Week.FRIDAY, false);
-        daysMap.put(Week.SATURDAY, false);
-        daysMap.put(Week.SUNDAY, false);
-        return daysMap;
-    }
-
     public void setUid(long uid) {
         this.uid = uid;
     }
@@ -91,7 +79,7 @@ public class Timer {
     public void setDaysStr(String daysStr) {
         this.daysStr = daysStr;
         if (daysStr == null || daysStr.isEmpty()) {
-            this.daysStr =  DaysParser.daysToStr(initWeek());
+            this.daysStr =  DaysParser.daysToStr(Week.initWeek());
             return;
         }
 //        TODO: Maybe replace it to initTimer
@@ -99,7 +87,6 @@ public class Timer {
     }
 
     public void setDaysMap(Map<String, Boolean> daysMap) {
-        Log.e(Timer.class.getSimpleName(), " setDaysMap: " + DaysParser.daysToStr(daysMap));
         this.daysMap = daysMap;
         this.daysStr = DaysParser.daysToStr(daysMap);
     }
