@@ -90,7 +90,7 @@ public class Week {
         }
     }
 
-    public static String getShortStringFromInt(int day) throws IndexOutOfBoundsException {
+    public static String getShortString(int day) throws IndexOutOfBoundsException {
 
         if (day < 0 || day > 6) {
             throw new IndexOutOfBoundsException(
@@ -110,6 +110,19 @@ public class Week {
         return "";
     }
 
+    public static String getShortString(String longDay) {
+        switch (longDay) {
+            case LONG_MONDAY:       return MONDAY;
+            case LONG_TUESDAY:      return TUESDAY;
+            case LONG_WEDNESDAY:    return WEDNESDAY;
+            case LONG_THURSDAY:     return THURSDAY;
+            case LONG_FRIDAY:       return FRIDAY;
+            case LONG_SATURDAY:     return SATURDAY;
+            case LONG_SUNDAY:       return SUNDAY;
+        }
+        throw new IncorrectDayException("Incorrect day name: " + longDay);
+    }
+
     public static boolean isDayOnThisWeek(@NonNull String currentDay, @NonNull String nearDay) {
         return getIntFromString(currentDay) < getIntFromString(nearDay);
     }
@@ -119,15 +132,15 @@ public class Week {
 
 //        On this week
         for (int i = from; i < COUNT_OF_DAYS; i++) {
-            if (weekMap.get(Week.getShortStringFromInt(i))) {
-                return getShortStringFromInt(i);
+            if (weekMap.get(Week.getShortString(i))) {
+                return getShortString(i);
             }
         }
 
 //        On next week
         for (int i = 0; i < COUNT_OF_DAYS - from; i++) {
-            if (weekMap.get(Week.getShortStringFromInt(i))) {
-                return getShortStringFromInt(i);
+            if (weekMap.get(Week.getShortString(i))) {
+                return getShortString(i);
             }
         }
 

@@ -69,19 +69,19 @@ public class WeekTest {
 
     @Test
     public void getShortStringFromInt() {
-        assertThat(Week.getShortStringFromInt(Week.INT_MONDAY),    is(Week.MONDAY));
-        assertThat(Week.getShortStringFromInt(Week.INT_TUESDAY),   is(Week.TUESDAY));
-        assertThat(Week.getShortStringFromInt(Week.INT_WEDNESDAY), is(Week.WEDNESDAY));
-        assertThat(Week.getShortStringFromInt(Week.INT_THURSDAY),  is(Week.THURSDAY));
-        assertThat(Week.getShortStringFromInt(Week.INT_FRIDAY),    is(Week.FRIDAY));
-        assertThat(Week.getShortStringFromInt(Week.INT_SATURDAY),  is(Week.SATURDAY));
-        assertThat(Week.getShortStringFromInt(Week.INT_SUNDAY),    is(Week.SUNDAY));
+        assertThat(Week.getShortString(Week.INT_MONDAY),    is(Week.MONDAY));
+        assertThat(Week.getShortString(Week.INT_TUESDAY),   is(Week.TUESDAY));
+        assertThat(Week.getShortString(Week.INT_WEDNESDAY), is(Week.WEDNESDAY));
+        assertThat(Week.getShortString(Week.INT_THURSDAY),  is(Week.THURSDAY));
+        assertThat(Week.getShortString(Week.INT_FRIDAY),    is(Week.FRIDAY));
+        assertThat(Week.getShortString(Week.INT_SATURDAY),  is(Week.SATURDAY));
+        assertThat(Week.getShortString(Week.INT_SUNDAY),    is(Week.SUNDAY));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void testWeekIndexOutOfBoundsException() {
-        Week.getShortStringFromInt(7);
-        Week.getShortStringFromInt(-1);
+        Week.getShortString(7);
+        Week.getShortString(-1);
     }
 
     @Test

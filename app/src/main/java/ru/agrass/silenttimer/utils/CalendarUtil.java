@@ -70,26 +70,7 @@ public class CalendarUtil {
                 Calendar.LONG,
                 Locale.ENGLISH
         );
-
-        Log.e(TAG, "Current day: " + day);
-        switch (day) {
-            case Week.LONG_MONDAY:
-                return Week.MONDAY;
-            case Week.LONG_TUESDAY:
-                return Week.TUESDAY;
-            case Week.LONG_WEDNESDAY:
-                return Week.WEDNESDAY;
-            case Week.LONG_THURSDAY:
-                return Week.THURSDAY;
-            case Week.LONG_FRIDAY:
-                return Week.FRIDAY;
-            case Week.LONG_SATURDAY:
-                return Week.SATURDAY;
-            case Week.LONG_SUNDAY:
-                return Week.SUNDAY;
-            default:
-                return "";
-        }
+        return Week.getShortString(day);
     }
 
     public static Calendar addDay(Calendar calendar) {
