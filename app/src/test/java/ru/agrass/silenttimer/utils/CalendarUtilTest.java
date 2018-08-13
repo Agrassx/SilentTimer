@@ -27,6 +27,13 @@ public class CalendarUtilTest {
 
     @Test
     public void getCalendarOfNextWeek() {
+        Calendar current = CalendarUtil.getCalendar(10, 0);
+        Calendar nextWeek = CalendarUtil.getCalendarOfNextWeek(
+                10,
+                0,
+                CalendarUtil.getCurrentDayOfWeek()
+        );
+        assertTrue(current.getTimeInMillis() < nextWeek.getTimeInMillis());
     }
 
     @Test
