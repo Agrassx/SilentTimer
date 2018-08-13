@@ -79,8 +79,8 @@ public class CalendarUtil {
     }
 
 
-    public static boolean isCurrentLessThenTimeFrom(@NonNull Calendar time) {
-        return getCurrentTimeCalendar().getTimeInMillis() < time.getTimeInMillis();
+    public static boolean isCurrentLessThenTimeFrom(@NonNull Calendar from) {
+        return getCurrentTimeCalendar().getTimeInMillis() < from.getTimeInMillis();
     }
 
     public static boolean isCurrentTimeBetweenFromAndTo(@NonNull Calendar from, @NonNull Calendar to) {
@@ -89,8 +89,8 @@ public class CalendarUtil {
                 current.getTimeInMillis() < to.getTimeInMillis();
     }
 
-    public static boolean isCurrentMoreThenTimeTo(@NonNull Calendar time) {
-        return getCurrentTimeCalendar().getTimeInMillis() > time.getTimeInMillis();
+    public static boolean isCurrentMoreThenTimeTo(@NonNull Calendar to) {
+        return getCurrentTimeCalendar().getTimeInMillis() > to.getTimeInMillis();
     }
 
 
