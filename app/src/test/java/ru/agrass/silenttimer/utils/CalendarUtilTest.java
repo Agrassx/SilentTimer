@@ -3,6 +3,7 @@ package ru.agrass.silenttimer.utils;
 import org.junit.Test;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -14,18 +15,6 @@ public class CalendarUtilTest {
     private static final long HOUR_MILLISECOND = 3600000;
 
     @Test
-    public void getCalendar() {
-    }
-
-    @Test
-    public void getCalendar1() {
-    }
-
-    @Test
-    public void getCalendar2() {
-    }
-
-    @Test
     public void getCalendarOfNextWeek() {
         Calendar current = CalendarUtil.getCalendar(10, 0);
         Calendar nextWeek = CalendarUtil.getCalendarOfNextWeek(
@@ -34,14 +23,14 @@ public class CalendarUtilTest {
                 CalendarUtil.getCurrentDayOfWeek()
         );
         assertTrue(current.getTimeInMillis() < nextWeek.getTimeInMillis());
-    }
 
-    @Test
-    public void getCurrentTimeCalendar() {
-    }
+        String dayCurrentWeek = getDayOfWeek(current);
+        String dayNextWeek = getDayOfWeek(nextWeek);
 
-    @Test
-    public void getCurrentDayOfWeek() {
+        assertTrue(
+                "Days not equal: " + dayCurrentWeek + " != " + dayNextWeek,
+                dayCurrentWeek.equals(dayNextWeek)
+        );
     }
 
     @Test
@@ -104,5 +93,13 @@ public class CalendarUtilTest {
         to.setTimeInMillis(currentTime + HOUR_MILLISECOND * 3);
 
         assertFalse(CalendarUtil.isCurrentMoreThenTimeTo(to));
+    }
+
+    private String getDayOfWeek(Calendar calendar) {
+        return calendar.getDisplayName(
+                Calendar.DAY_OF_WEEK,
+                Calendar.LONG,
+                Locale.ENGLISH
+        );
     }
 }

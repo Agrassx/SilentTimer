@@ -7,7 +7,8 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
-import ru.agrass.silenttimer.model.DataBaseImpl;
+import io.reactivex.Observable;
+import ru.agrass.silenttimer.model.database.DataBaseImpl;
 import ru.agrass.silenttimer.model.TimerScheduler;
 import ru.agrass.silenttimer.utils.IntentTimerUtil;
 import ru.agrass.silenttimer.utils.SoundSwitchUtil;
@@ -26,8 +27,7 @@ public class SoundSwitchReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-//        TODO: change log.e on log.i
-        Log.e(TAG, "onReceive");
+        Log.i(TAG, "onReceive");
 
         db = DataBaseImpl.getInstance(context);
         timerScheduler = new TimerScheduler();
@@ -45,24 +45,25 @@ public class SoundSwitchReceiver extends BroadcastReceiver {
         }
 
         if (intent.getAction().equals(SWITCH_TIMER)) {
+            Log.i(TAG, SWITCH_TIMER);
             switchTimer(intent);
             return;
         }
 
         if (intent.getAction().equals(STOP_TIMER)) {
+            Log.i(TAG, STOP_TIMER);
             stopTimer(intent);
         }
     }
 
     private void stopTimer(Intent intent) {
-        db.getTimer(intent.getLongExtra(TAG_UID,0L))
+        long uid = intent.getLongExtra(TAG_UID,0L);
+        Observable.fromCallable(() -> db.getTimer(uid))
                 .subscribeOn(mSchedulerProvider.io())
                 .doOnNext(timer -> {
                     timer.setEnable(false);
-                    db.insertOrUpdateTimer(timer)
-                        .subscribe();
+                    db.insertOrUpdateTimer(timer);
                 })
-                .doOnError(Throwable::printStackTrace)
                 .observeOn(mSchedulerProvider.ui())
                 .subscribe();
     }
@@ -70,27 +71,17 @@ public class SoundSwitchReceiver extends BroadcastReceiver {
     private void switchTimer(Intent intent) {
         boolean isSoundOff = intent.getBooleanExtra(IntentTimerUtil.TAG_SOUND_TURN_OFF, false);
         if (isSoundOff) {
-            soundTurnOff(intent);
-            return;
+            SoundSwitchUtil.soundTurnOff();
+        } else {
+            SoundSwitchUtil.soundTurnOn();
         }
-        soundTurnOn(intent);
-        startAtNextTime(intent.getLongExtra(TAG_UID,0L));
-    }
-
-    private void soundTurnOn(Intent intent) {
-        SoundSwitchUtil.soundTurnOn();
-        Log.e(TAG, String.valueOf(intent.getLongExtra(TAG_UID,0L)));
-    }
-
-    private void soundTurnOff(Intent intent) {
-        SoundSwitchUtil.soundTurnOff();
-        Log.e(TAG, String.valueOf(intent.getLongExtra(TAG_UID,0L)));
+        startAtNextTime(intent.getLongExtra(TAG_UID, 0L));
     }
 
     private void startAtNextTime(long uid) {
-        db.getTimer(uid)
+        Observable.fromCallable(() -> db.getTimer(uid))
                 .subscribeOn(mSchedulerProvider.io())
-                .doOnNext(timer -> timerScheduler.setUpTimer(timer))
+                .doOnNext(timer -> timerScheduler.updateTimer(timer))
                 .doOnError(Throwable::printStackTrace)
                 .observeOn(mSchedulerProvider.ui())
                 .subscribe();

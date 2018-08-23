@@ -1,4 +1,4 @@
-package ru.agrass.silenttimer.model.database;
+package ru.agrass.silenttimer.model.database.timer;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
@@ -8,20 +8,17 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.Single;
-import ru.agrass.silenttimer.model.Timer;
+import ru.agrass.silenttimer.model.entity.Timer;
 
 
 @Dao
 public interface TimerDao {
 
     @Query("SELECT * FROM timers")
-    Flowable<List<Timer>> getAll();
+    List<Timer> getAll();
 
     @Query("SELECT * FROM timers WHERE uid = :uid")
-    Flowable<Timer> getTimerByUid(long uid);
+    Timer getTimerByUid(long uid);
 
     @Insert
     void insertAll(Timer... timers);

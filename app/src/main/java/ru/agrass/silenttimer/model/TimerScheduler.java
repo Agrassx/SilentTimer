@@ -8,6 +8,8 @@ import com.crashlytics.android.Crashlytics;
 import java.util.Calendar;
 import java.util.Map;
 
+import ru.agrass.silenttimer.model.entity.Timer;
+import ru.agrass.silenttimer.model.entity.Week;
 import ru.agrass.silenttimer.model.exceptions.DayNotFoundException;
 import ru.agrass.silenttimer.model.exceptions.WeekException;
 import ru.agrass.silenttimer.model.parsers.TimeParser;
@@ -19,34 +21,9 @@ import ru.agrass.silenttimer.utils.SoundSwitchUtil;
 public class TimerScheduler {
     private static final String TAG = TimerScheduler.class.getSimpleName();
 
-    @Deprecated
-    public void startTimer(Timer timer) {
-        Log.e(TAG, "Start Timer");
-        try {
-            boolean isDayMode = isDayMode(timer);
-            if (isCurrentTimeLessThenTimerFrom(timer)) {
-                startAtTimeFrom(timer);
-                Log.e(TAG, "Current Time Less Then Timer From");
-            } else if (isTimeBetweenFromAndTo(timer, isDayMode)) {
-                startNow();
-                startAtTimeTo(timer, isDayMode);
-                Log.e(TAG, "Time Between From And To");
-            } else if (isCurrentMoreThenTimeTo(timer, isDayMode)) {
-                startAtNewDay(timer, isDayMode);
-                Log.e(TAG, "Current Time More Then TimeTo");
-            } else {
-                Crashlytics.log("Bad timer: " + timer.toString());
-                throw new Exception("Bad timer: " + timer.toString());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void setUpTimer(Timer timer) {
         try {
             boolean isDayMode = isDayMode(timer);
-
             if (isOnlyOnce(timer)) {
                 startOnce(timer, isDayMode);
                 return;
@@ -55,7 +32,7 @@ public class TimerScheduler {
                 startToDay(timer, isDayMode);
                 return;
             }
-            startAtNewDay(timer, isDayMode);
+            startAtNewDay(timer);
         } catch (DayNotFoundException e) {
             Log.e(TAG, e.getMessage());
             Crashlytics.log(e.getMessage());
@@ -65,12 +42,14 @@ public class TimerScheduler {
     private void startToDay(Timer timer, boolean isDayMode) {
         try {
             if (isCurrentTimeLessThenTimerFrom(timer)) {
+                Log.i(TAG, "Timer start today" + timer.toString());
                 startAtTimeFrom(timer);
             } else if (isTimeBetweenFromAndTo(timer, isDayMode)) {
+                Log.i(TAG, "Timer start now" + timer.toString());
                 startNow();
                 startAtTimeTo(timer, isDayMode);
             } else if (isCurrentMoreThenTimeTo(timer, isDayMode)) {
-                startAtNewDay(timer, isDayMode);
+                startAtNewDay(timer);
             } else {
                 Crashlytics.log("Bad timer: " + timer.toString());
                 throw new Exception("Bad timer: " + timer.toString());
@@ -81,6 +60,7 @@ public class TimerScheduler {
     }
 
     private void startOnce(Timer timer, boolean isDayMode) {
+        Log.i(TAG, "Timer is only once " + timer.toString());
         try {
             if (isCurrentTimeLessThenTimerFrom(timer)) {
                 startAtTimeFrom(timer);
@@ -90,11 +70,11 @@ public class TimerScheduler {
             } else if (isCurrentMoreThenTimeTo(timer, isDayMode)) {
                 stopTimer(timer);
             } else {
-                Crashlytics.log("Bad timer: " + timer.toString());
                 throw new Exception("Bad timer: " + timer.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Crashlytics.log(e.getMessage());
         }
     }
 
@@ -136,17 +116,17 @@ public class TimerScheduler {
     }
 
     public void updateTimer(Timer timer) {
-        cancelTimer(timer);
-        setUpTimer(timer);
+        if (timer.isEnable()) {
+//            stopTimer(timer);
+            setUpTimer(timer);
+        } else {
+            cancelTimer(timer);
+        }
     }
 
     public void cancelTimer(Timer timer) {
-        cancelNow(timer);
-    }
-
-    private void cancelNow(Timer timer) {
         AlarmManagerUtil.cancelAlarm(
-                IntentTimerUtil.getIntentFromTimer(timer, false)
+                IntentTimerUtil.getStopIntent(timer)
         );
         SoundSwitchUtil.soundTurnOn();
     }
@@ -184,12 +164,15 @@ public class TimerScheduler {
         );
     }
 
-    private void startAtNewDay(Timer timer, boolean isDayMode) {
+    private void startAtNewDay(Timer timer) {
         try {
             String nearDay = Week.findNearestDay(
                     timer.getDaysMap(),
                     CalendarUtil.getCurrentDayOfWeek()
             );
+
+            Log.i(TAG, "Timer start at " + nearDay + " " + timer.toString());
+
             if (Week.isDayOnThisWeek(CalendarUtil.getCurrentDayOfWeek(), nearDay)) {
                 startOnThisWeek(timer, nearDay);
                 return;
@@ -241,6 +224,12 @@ public class TimerScheduler {
                 TimeParser.getIntHourFromString(timer.getTimeTo()),
                 TimeParser.getIntMinuteFromString(timer.getTimeTo())
         );
+        long timeTo = to.getTimeInMillis();
+        long current = CalendarUtil.getCurrentTimeCalendar().getTimeInMillis();
+
+        Log.e(TAG, "timeTo = " + timeTo);
+        Log.e(TAG, "current = " + current);
+
         return CalendarUtil.isCurrentMoreThenTimeTo(to);
     }
 }

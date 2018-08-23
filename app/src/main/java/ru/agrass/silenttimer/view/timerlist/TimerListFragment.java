@@ -1,7 +1,6 @@
 package ru.agrass.silenttimer.view.timerlist;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,27 +15,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.fabric.sdk.android.Fabric;
 import ru.agrass.silenttimer.R;
-import ru.agrass.silenttimer.SilentTimerApplication;
-import ru.agrass.silenttimer.model.Timer;
+import ru.agrass.silenttimer.model.entity.Timer;
 import ru.agrass.silenttimer.model.parsers.TimeParser;
-import ru.agrass.silenttimer.presenter.TimerListPresenter;
-import ru.agrass.silenttimer.receivers.SoundSwitchReceiver;
 import ru.agrass.silenttimer.view.activity.MainActivityView;
 import ru.agrass.silenttimer.view.adapters.TimerRecyclerViewAdapter;
 import ru.agrass.silenttimer.view.base.BaseFragment;
@@ -49,7 +41,7 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
 
     private MainActivityView activityView;
     private TimerRecyclerViewAdapter mAdapter;
-    private TimerListPresenter presenter;
+    private TimerListPresenter<TimerListView> presenter;
     private TimePickerDialogC timePicker;
     private Unbinder unbinder;
 
@@ -81,9 +73,9 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        presenter = new TimerListPresenter(getContext(), this);
         mAdapter = new TimerRecyclerViewAdapter(new ArrayList<>());
         timePicker = new TimePickerDialogC(getContext());
+        presenter = new TimerListPresenter<>(getContext());
     }
 
 
@@ -101,30 +93,32 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
 
         buttonAdd.setOnClickListener(this::addTimer);
         mAdapter.setDeleteTimerClickListener(this::deleteTimer);
-        mAdapter.setChangeTimerListener(this::changeTimer);
+        mAdapter.setChangeTimerListener(this::onTimerChanged);
         mAdapter.setEditTimeClickListener(this::editTime);
         mAdapter.setOnChangeSwitchListener(this::onSwitchTimer);
-
+        presenter.onAttach(this);
         if (savedInstanceState == null) {
             presenter.getTimers();
         }
         return view;
     }
 
-    private void onSwitchTimer(Timer timer) {
-        if (timer.isEnable()) {
-            presenter.startTimer(timer);
-            return;
-        }
-        presenter.stopTimer(timer);
+    @Deprecated
+    private void onSwitchTimer(@NonNull Timer timer) {
+//        Log.i(TAG, "onSwitchTimer timer: " + timer.toString());
+//        if (timer.isEnable()) {
+//            presenter.updateTimer(timer);
+//            return;
+//        }
+//        presenter.stopTimer(timer);
     }
 
-    private void deleteTimer(Timer timer) {
+    private void deleteTimer(@NonNull Timer timer) {
         presenter.deleteTimer(timer);
     }
 
-    private void changeTimer(Timer timer) {
-        Log.e(TAG, "Change timer " + new Gson().toJson(timer));
+    private void onTimerChanged(@NonNull Timer timer) {
+        Log.e(TAG, "Change timer " + timer.toString());
         presenter.updateTimer(timer);
     }
 
@@ -161,8 +155,6 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
     }
 
     private void addTimer(View view) {
-        Log.e(TAG, "OnClickListener");
-//        presenter.startTimer(mAdapter.getTimer(0));
         presenter.addTimer();
     }
 
@@ -182,20 +174,32 @@ public class TimerListFragment extends BaseFragment implements TimerListView {
     }
 
     @Override
-    public void showTimers(List<Timer> list) {
-        if (list == null || list.size() < 1) {
+    public void showTimers(@NonNull List<Timer> list) {
+        if (list.size() < 1) {
             buttonAdd.setVisibility(View.VISIBLE);
         } else {
             Log.e(TAG, new Gson().toJson(list));
             buttonAdd.setVisibility(View.GONE);
-            mAdapter.addAll(list);
-            mAdapter.notifyDataSetChanged();
         }
+        mAdapter.addAll(list);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void showNewTimer(Timer timer) {
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.resume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        presenter.pause();
     }
 
     @Override

@@ -14,7 +14,7 @@ public class AlarmManagerUtil {
     private static final String TAG = AlarmManagerUtil.class.getSimpleName();
 
     public static void startAlarm(Intent intent, long atTime) {
-        Log.e(TAG, "Start alarm");
+        Log.i(TAG, "Start alarm");
 
         PendingIntent alarmIntent = PendingIntent.getBroadcast(
                 SilentTimerApplication.getInstance().getApplicationContext(),
@@ -32,6 +32,7 @@ public class AlarmManagerUtil {
     }
 
     public static void stopAlarm(Intent intent) {
+        Log.i(TAG, "Stop alarm");
         PendingIntent alarmIntent = PendingIntent.getBroadcast(
                 SilentTimerApplication.getInstance().getApplicationContext(),
                 safeLongToInt(intent.getLongExtra(TAG_UID, 0L)),
@@ -42,7 +43,7 @@ public class AlarmManagerUtil {
 
         manager.setExact(
                 AlarmManager.RTC_WAKEUP,
-                CalendarUtil.getCurrentTimeCalendar().getTimeInMillis() + 3000,
+                CalendarUtil.getCurrentTimeCalendar().getTimeInMillis(),
                 alarmIntent
         );
     }

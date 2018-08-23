@@ -1,11 +1,9 @@
-package ru.agrass.silenttimer.model;
+package ru.agrass.silenttimer.model.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.v4.util.ArrayMap;
-import android.util.Log;
 
 import com.google.gson.Gson;
 

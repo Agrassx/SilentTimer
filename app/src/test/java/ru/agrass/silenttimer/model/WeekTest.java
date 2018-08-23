@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import ru.agrass.silenttimer.model.entity.Week;
 import ru.agrass.silenttimer.model.exceptions.DayNotFoundException;
 import ru.agrass.silenttimer.model.exceptions.WeekException;
 

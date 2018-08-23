@@ -1,4 +1,4 @@
-package ru.agrass.silenttimer.model.database;
+package ru.agrass.silenttimer.model.database.timer;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Database;
@@ -6,7 +6,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import ru.agrass.silenttimer.model.Timer;
+import ru.agrass.silenttimer.model.entity.Timer;
 
 
 @Database(entities = {Timer.class}, version = 1)

@@ -5,13 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
-import java.util.Observable;
-
-import io.reactivex.disposables.Disposable;
-import ru.agrass.silenttimer.model.DataBaseImpl;
-import ru.agrass.silenttimer.model.Timer;
+import io.reactivex.Observable;
+import ru.agrass.silenttimer.model.database.DataBaseImpl;
+import ru.agrass.silenttimer.model.entity.Timer;
 import ru.agrass.silenttimer.model.TimerScheduler;
 import ru.agrass.silenttimer.utils.rx.AppSchedulerProvider;
 import ru.agrass.silenttimer.utils.rx.SchedulerProvider;
@@ -39,9 +35,9 @@ public class OnBootReceiver extends BroadcastReceiver {
 
     private void restartTimers() {
         Log.e(TAG, "Boot complete !");
-        db.getAllTimers()
+        Observable.fromCallable(() -> db.getAllTimers())
                 .subscribeOn(mSchedulerProvider.io())
-                .flatMapIterable(list -> list)
+                .flatMapIterable(item -> item)
                 .filter(Timer::isEnable)
                 .doOnNext(timerScheduler::setUpTimer)
                 .observeOn(mSchedulerProvider.ui())

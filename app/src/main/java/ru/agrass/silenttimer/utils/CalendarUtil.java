@@ -1,13 +1,11 @@
 package ru.agrass.silenttimer.utils;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.Map;
 
-import ru.agrass.silenttimer.model.Week;
+import ru.agrass.silenttimer.model.entity.Week;
 
 
 public class CalendarUtil {
@@ -85,12 +83,12 @@ public class CalendarUtil {
 
     public static boolean isCurrentTimeBetweenFromAndTo(@NonNull Calendar from, @NonNull Calendar to) {
         Calendar current = getCurrentTimeCalendar();
-        return current.getTimeInMillis() > from.getTimeInMillis() &&
+        return current.getTimeInMillis() >= from.getTimeInMillis() &&
                 current.getTimeInMillis() < to.getTimeInMillis();
     }
 
     public static boolean isCurrentMoreThenTimeTo(@NonNull Calendar to) {
-        return getCurrentTimeCalendar().getTimeInMillis() > to.getTimeInMillis();
+        return getCurrentTimeCalendar().getTimeInMillis() >= to.getTimeInMillis();
     }
 
 

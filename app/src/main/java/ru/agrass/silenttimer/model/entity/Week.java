@@ -1,4 +1,4 @@
-package ru.agrass.silenttimer.model;
+package ru.agrass.silenttimer.model.entity;
 
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
@@ -131,7 +131,7 @@ public class Week {
         int from = Week.getIntFromString(currentDayOfWeek);
 
 //        On this week
-        for (int i = from; i < COUNT_OF_DAYS; i++) {
+        for (int i = from + 1; i < COUNT_OF_DAYS; i++) {
             if (weekMap.get(Week.getShortString(i))) {
                 return getShortString(i);
             }

@@ -3,7 +3,7 @@ package ru.agrass.silenttimer.utils;
 import android.content.Intent;
 
 import ru.agrass.silenttimer.SilentTimerApplication;
-import ru.agrass.silenttimer.model.Timer;
+import ru.agrass.silenttimer.model.entity.Timer;
 import ru.agrass.silenttimer.receivers.SoundSwitchReceiver;
 
 public class IntentTimerUtil {

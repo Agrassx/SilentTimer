@@ -21,13 +21,7 @@ public class TimerSchedulerTest {
 
     @Test
     public void checkFindNearestDay() {
-        Class[] classes = {Timer.class, String.class};
-//        Method findNearestDay = TimerScheduler.class.getDeclaredMethod("findNearestDay", classes);
-//        findNearestDay.setAccessible(true);
-//
-//        TimerScheduler scheduler = new TimerScheduler();
-//
-//        findNearestDay.invoke(Timer.generateTimer(), Week.LONG_MONDAY);
+
     }
 
     @Test

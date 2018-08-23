@@ -16,7 +16,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.agrass.silenttimer.R;
-import ru.agrass.silenttimer.model.Timer;
+import ru.agrass.silenttimer.model.entity.Timer;
 import ru.agrass.silenttimer.view.custom.view.CheckBoxDay;
 
 public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecyclerViewAdapter.ViewHolder> {
@@ -90,6 +90,7 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         this.deleteTimerClickListener = deleteTimerClickListener;
     }
 
+    @Deprecated
     public void setOnChangeSwitchListener(OnChangeSwitchListener onChangeSwitchListener) {
         this.onChangeSwitchListener = onChangeSwitchListener;
     }
@@ -216,6 +217,7 @@ public class TimerRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecycler
         void onItemClick(Timer item, View sharedView);
     }
 
+    @Deprecated
     public interface OnChangeSwitchListener {
         void onSwitch(Timer timer);
     }
